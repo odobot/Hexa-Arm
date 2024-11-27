@@ -1,0 +1,179 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="hexaarm">
+
+    <xacro:property name="PI" value="3.14159"/>
+    <xacro:property name="effort" value="30"/>
+    <xacro:property name="velocity" value="10.0"/>
+
+    <xacro:macro name="default_inertial" params="mass">
+        <inertial>
+            <mass value="${mass}"/>
+            <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+        </inertial>
+    </xacro:macro>
+
+    <link name="dummy_link"/>
+
+    <joint name="dummy_joint" type="fixed">
+        <parent link="dummy_link"/>
+        <child link="base_link"/>
+        <origin xyz="0.00055 0.01625 0.0" rpy="0.0 0.0 0.0"/>
+    </joint>
+    
+    
+    <!-- Base Link -->
+    <link name="base_link">
+        <xacro:default_inertial mass="1.0"/>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://hexaarm_description/meshes/base_assembly.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://hexaarm_description/meshes/base_assembly.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="base_shoulder" type="revolute">
+        <parent link="base_link"/>
+        <child link="shoulder_link"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="-3.14159" upper="3.14159" velocity="50.0" effort="1000.0"/>
+        <origin xyz="0.0 -0.0165 0.0735" rpy="0.0 0.0 0.0"/>
+    </joint>
+    
+    <!-- <joint name="base_shoulder" type="fixed">
+        <parent link="base_link"/>
+        <child link="shoulder_link"/>
+        <origin xyz="0.0 -0.0165 0.0735" rpy="0.0 0.0 0.0"/>
+    </joint> -->
+    
+    <!-- Shoulder Link -->
+    <link name="shoulder_link">
+        <xacro:default_inertial mass="1.0"/>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://hexaarm_description/meshes/base_shoulder_assembly.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://hexaarm_description/meshes/base_shoulder_assembly.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="shoulder_elbow" type="revolute">
+        <parent link="shoulder_link"/>
+        <child link="elbow_link"/>
+        <axis xyz="0 1 0"/>
+        <limit lower="-3.14159" upper="3.14159" velocity="50.0" effort="1000.0"/>
+        <origin xyz="0.0005 -0.01195 0.02420" rpy="0.0 0.0 0.0"/>
+    </joint>
+
+    <!-- <joint name="shoulder_elbow" type="fixed">
+        <parent link="shoulder_link"/>
+        <child link="elbow_link"/>
+        <origin xyz="0.0005 -0.01195 0.08220" rpy="0.0 0.0 0.0"/>
+    </joint> -->
+    
+    <!-- Elbow Link -->
+    <link name="elbow_link">
+        <xacro:default_inertial mass="1.0"/>
+        <visual>
+            <origin xyz="0 0 0.058" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://hexaarm_description/meshes/shoulder_elbow_assembly.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0.058" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://hexaarm_description/meshes/shoulder_elbow_assembly.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="elbow_wrist" type="revolute">
+        <parent link="elbow_link"/>
+        <child link="wrist_link"/>
+        <axis xyz="1 0 0"/>
+        <limit lower="-3.14159" upper="3.14159" velocity="50.0" effort="1000.0"/>
+        <origin xyz="0.0002 0.02115 0.03307" rpy="1.571 0.0 1.571"/>
+    </joint>
+
+    <!-- <joint name="elbow_wrist" type="fixed">
+        <parent link="elbow_link"/>
+        <child link="wrist_link"/>
+        <origin xyz="0.0002 0.02115 0.03307" rpy="1.571 0.0 1.571"/>
+    </joint> -->
+
+    <!-- Wrist Link -->
+    <link name="wrist_link">
+        <xacro:default_inertial mass="1.0"/>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://hexaarm_description/meshes/elbow_wrist1_assembly.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://hexaarm_description/meshes/elbow_wrist1_assembly.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="wrist_ulna" type="fixed">
+        <parent link="wrist_link"/>
+        <child link="ulna_link"/>
+        <origin xyz="-0.008425 0.0839 -0.00005" rpy="0.0 0.0 0.0"/>
+    </joint>
+    
+    <!-- Ulna Link -->
+    <link name="ulna_link">
+        <xacro:default_inertial mass="1.0"/>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://hexaarm_description/meshes/wrist1_wrist2_assembly.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://hexaarm_description/meshes/wrist1_wrist2_assembly.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="ulna_febur" type="fixed">
+        <parent link="ulna_link"/>
+        <child link="febur_link"/>
+        <origin xyz="0.0002 0.0385 0.0001" rpy="0.0 0.0 0.0"/>
+    </joint>
+
+    <!-- Febur Link -->
+    <link name="febur_link">
+        <xacro:default_inertial mass="1.0"/>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://hexaarm_description/meshes/elbow_wrist1_assembly.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://hexaarm_description/meshes/elbow_wrist1_assembly.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </collision>
+    </link>
+</robot>
