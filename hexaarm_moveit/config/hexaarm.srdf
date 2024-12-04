@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding= "UTF-8"?>
+
+<robot name="hexaarm">
+
+    <group name="arm">
+        <joint name="dummy_joint"/>
+        <joint name="base_shoulder"/>
+        <joint name="shoulder_elbow"/>
+        <joint name="elbow_wrist"/>
+        <joint name="wrist_ulna"/>
+        <joint name="ulna_febur"/>
+        <joint name="febur_gripper"/>
+    </group>
+
+    <group name="gripper">
+        <joint name="left_finger"/>
+        <joint name="right_finger"/>
+    </group>
+
+    <group_state name="home" group="arm">
+        <joint name="base_shoulder" value="0"/>
+        <joint name="elbow_wrist" value="0"/>
+        <joint name="febur_gripper" value="0"/>
+        <joint name="shoulder_elbow" value="0"/>
+        <joint name="ulna_febur" value="0"/>
+        <joint name="wrist_ulna" value="0"/>
+    </group_state>
+
+    <group_state name="pick_pose" group="arm">
+        <joint name="base_shoulder" value="0"/>
+        <joint name="elbow_wrist" value="-1.3624"/>
+        <joint name="febur_gripper" value="0"/>
+        <joint name="shoulder_elbow" value="-0.807"/>
+        <joint name="ulna_febur" value="-0.6508"/>
+        <joint name="wrist_ulna" value="0"/>
+    </group_state>
+
+    <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
+    <end_effector name="gripper" parent_link="gripper_link" group="gripper"/>
+    <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
+    <virtual_joint name="dummy_link" type="fixed" parent_frame="world" child_link="base_link"/>
+    
+    <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
+    <disable_collisions link1="base_link" link2="elbow_link" reason="Never"/>
+    <disable_collisions link1="base_link" link2="shoulder_link" reason="Adjacent"/>
+    <disable_collisions link1="elbow_link" link2="febur_link" reason="Never"/>
+    <disable_collisions link1="elbow_link" link2="gripper_link" reason="Never"/>
+    <disable_collisions link1="elbow_link" link2="left_finger_link" reason="Never"/>
+    <disable_collisions link1="elbow_link" link2="shoulder_link" reason="Adjacent"/>
+    <disable_collisions link1="elbow_link" link2="ulna_link" reason="Never"/>
+    <disable_collisions link1="elbow_link" link2="wrist_link" reason="Adjacent"/>
+    <disable_collisions link1="febur_link" link2="gripper_link" reason="Adjacent"/>
+    <disable_collisions link1="febur_link" link2="shoulder_link" reason="Never"/>
+    <disable_collisions link1="febur_link" link2="ulna_link" reason="Adjacent"/>
+    <disable_collisions link1="febur_link" link2="wrist_link" reason="Never"/>
+    <disable_collisions link1="gripper_link" link2="left_finger_link" reason="Adjacent"/>
+    <disable_collisions link1="gripper_link" link2="right_finger_link" reason="Adjacent"/>
+    <disable_collisions link1="gripper_link" link2="shoulder_link" reason="Never"/>
+    <disable_collisions link1="gripper_link" link2="ulna_link" reason="Never"/>
+    <disable_collisions link1="gripper_link" link2="wrist_link" reason="Never"/>
+    <disable_collisions link1="left_finger_link" link2="right_finger_link" reason="Default"/>
+    <disable_collisions link1="shoulder_link" link2="ulna_link" reason="Never"/>
+    <disable_collisions link1="shoulder_link" link2="wrist_link" reason="Never"/>
+    <disable_collisions link1="ulna_link" link2="wrist_link" reason="Adjacent"/>
+</robot>

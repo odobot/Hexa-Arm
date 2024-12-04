@@ -1,6 +1,11 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="hexaarm">
 
+    <xacro:arg name="is_sim" default="true"/>
+
+    <xacro:include filename="$(find hexaarm_description)/urdf/hexaarm_gazebo.xacro" />
+    <xacro:include filename="$(find hexaarm_description)/urdf/hexaarm_ros2_control.xacro" />
+
     <xacro:property name="PI" value="3.14159"/>
     <xacro:property name="effort" value="30"/>
     <xacro:property name="velocity" value="10.0"/>
@@ -12,15 +17,14 @@
         </inertial>
     </xacro:macro>
 
-    <link name="dummy_link"/>
+    <link name="world"/>
 
     <joint name="dummy_joint" type="fixed">
-        <parent link="dummy_link"/>
+        <parent link="world"/>
         <child link="base_link"/>
-        <origin xyz="0.00055 0.01625 0.0" rpy="0.0 0.0 0.0"/>
+        <origin xyz="0 0.02 0.025" rpy="0 0 0"/>
     </joint>
-    
-    
+
     <!-- Base Link -->
     <link name="base_link">
         <xacro:default_inertial mass="1.0"/>
@@ -42,16 +46,10 @@
         <parent link="base_link"/>
         <child link="shoulder_link"/>
         <axis xyz="0 0 1"/>
-        <limit lower="-3.14159" upper="3.14159" velocity="50.0" effort="1000.0"/>
+        <limit lower="-${pi/2}" upper="${pi/2}" velocity="${velocity}" effort="${effort}"/>
         <origin xyz="0.0 -0.0165 0.0735" rpy="0.0 0.0 0.0"/>
     </joint>
-    
-    <!-- <joint name="base_shoulder" type="fixed">
-        <parent link="base_link"/>
-        <child link="shoulder_link"/>
-        <origin xyz="0.0 -0.0165 0.0735" rpy="0.0 0.0 0.0"/>
-    </joint> -->
-    
+
     <!-- Shoulder Link -->
     <link name="shoulder_link">
         <xacro:default_inertial mass="1.0"/>
@@ -73,16 +71,10 @@
         <parent link="shoulder_link"/>
         <child link="elbow_link"/>
         <axis xyz="0 1 0"/>
-        <limit lower="-3.14159" upper="3.14159" velocity="50.0" effort="1000.0"/>
+        <limit lower="-${pi/2}" upper="${pi/2}" velocity="${velocity}" effort="${effort}"/>
         <origin xyz="0.0005 -0.01195 0.02420" rpy="0.0 0.0 0.0"/>
     </joint>
 
-    <!-- <joint name="shoulder_elbow" type="fixed">
-        <parent link="shoulder_link"/>
-        <child link="elbow_link"/>
-        <origin xyz="0.0005 -0.01195 0.08220" rpy="0.0 0.0 0.0"/>
-    </joint> -->
-    
     <!-- Elbow Link -->
     <link name="elbow_link">
         <xacro:default_inertial mass="1.0"/>
@@ -104,39 +96,42 @@
         <parent link="elbow_link"/>
         <child link="wrist_link"/>
         <axis xyz="1 0 0"/>
-        <limit lower="-3.14159" upper="3.14159" velocity="50.0" effort="1000.0"/>
-        <origin xyz="0.0002 0.02115 0.03307" rpy="1.571 0.0 1.571"/>
+        <limit lower="-${pi/2}" upper="${pi/2}" velocity="${velocity}" effort="${effort}"/>
+        <origin xyz="0.0002 0.02115 0.083085" rpy="1.571 0.0 1.571"/>
     </joint>
-
-    <!-- <joint name="elbow_wrist" type="fixed">
-        <parent link="elbow_link"/>
-        <child link="wrist_link"/>
-        <origin xyz="0.0002 0.02115 0.03307" rpy="1.571 0.0 1.571"/>
-    </joint> -->
 
     <!-- Wrist Link -->
     <link name="wrist_link">
         <xacro:default_inertial mass="1.0"/>
         <visual>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <origin xyz="0 0.008 0" rpy="0 0 0"/>
             <geometry>
                 <mesh filename="package://hexaarm_description/meshes/elbow_wrist1_assembly.stl" scale="0.001 0.001 0.001"/>
             </geometry>
         </visual>
         <collision>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <origin xyz="0 0.008 0" rpy="0 0 0"/>
             <geometry>
                 <mesh filename="package://hexaarm_description/meshes/elbow_wrist1_assembly.stl" scale="0.001 0.001 0.001"/>
             </geometry>
         </collision>
     </link>
 
-    <joint name="wrist_ulna" type="fixed">
+    <joint name="wrist_ulna" type="revolute">
         <parent link="wrist_link"/>
         <child link="ulna_link"/>
-        <origin xyz="-0.008425 0.0839 -0.00005" rpy="0.0 0.0 0.0"/>
+        <axis xyz="0 1.0 0"/>
+        <limit lower="-${pi/2}" upper="${pi/2}" velocity="${velocity}" effort="${effort}"/>
+        <origin xyz="-0.008425 0.0918 -0.00005" rpy="0.0 0.0 0.0"/>
     </joint>
-    
+
+
+    <!-- <joint name="wrist_ulna" type="fixed">
+        <parent link="wrist_link"/>
+        <child link="ulna_link"/>
+        <origin xyz="-0.008425 0.0918 -0.00005" rpy="0.0 0.0 0.0"/>
+    </joint> -->
+
     <!-- Ulna Link -->
     <link name="ulna_link">
         <xacro:default_inertial mass="1.0"/>
@@ -154,26 +149,130 @@
         </collision>
     </link>
 
-    <joint name="ulna_febur" type="fixed">
+    <joint name="ulna_febur" type="revolute">
+        <parent link="ulna_link"/>
+        <child link="febur_link"/>
+        <axis xyz="1.0 0 0"/>
+        <limit lower="-${pi/2}" upper="${pi/2}" velocity="${velocity}" effort="${effort}"/>
+        <origin xyz="0.0014 0.03011 0.0" rpy="0.0 0.0 0.0"/>
+    </joint>
+
+
+    <!-- <joint name="ulna_febur" type="fixed">
         <parent link="ulna_link"/>
         <child link="febur_link"/>
         <origin xyz="0.0002 0.0385 0.0001" rpy="0.0 0.0 0.0"/>
-    </joint>
+    </joint> -->
+
 
     <!-- Febur Link -->
     <link name="febur_link">
         <xacro:default_inertial mass="1.0"/>
         <visual>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <origin xyz="0 0.008 0.00015" rpy="0 0 0"/>
             <geometry>
                 <mesh filename="package://hexaarm_description/meshes/elbow_wrist1_assembly.stl" scale="0.001 0.001 0.001"/>
             </geometry>
         </visual>
         <collision>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <origin xyz="0 0.008 0.00015" rpy="0 0 0"/>
             <geometry>
                 <mesh filename="package://hexaarm_description/meshes/elbow_wrist1_assembly.stl" scale="0.001 0.001 0.001"/>
             </geometry>
         </collision>
     </link>
+
+    <!-- <joint name="febur_gripper" type="fixed">
+        <parent link="febur_link"/>
+        <child link="gripper_link"/>
+        <origin xyz="-0.0099 0.092500225 0.0" rpy="0.0 0.0 3.141592654"/>
+    </joint> -->
+
+    <joint name="febur_gripper" type="revolute">
+        <parent link="febur_link"/>
+        <child link="gripper_link"/>
+        <axis xyz="0 1.0 0"/>
+        <limit lower="-${pi/2}" upper="${pi/2}" velocity="${velocity}" effort="${effort}"/>
+        <origin xyz="-0.0099 0.092500225 0.0" rpy="0.0 0.0 3.141592654"/>
+    </joint>
+
+    <link name="gripper_link">
+        <xacro:default_inertial mass="1.0"/>
+        <visual>
+            <origin xyz="-0.02340 -0.03 -0.03" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://hexaarm_description/meshes/gripper_assembly.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="-0.02340 -0.03 -0.03" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://hexaarm_description/meshes/gripper_assembly.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="left_finger" type="continuous">
+        <parent link="gripper_link"/>
+        <child link="left_finger_link"/>
+        <axis xyz="0 0 1.0"/>
+        <mimic joint="right_finger" multiplier="-1"/>
+        <origin xyz="0.0115 -0.01475 0.0355" rpy="0.0 0.0 -2.3"/>
+    </joint>
+
+ 
+    <!-- <joint name="left_finger" type="fixed">
+        <parent link="gripper_link"/>
+        <child link="left_finger_link"/>
+        <origin xyz="0.0115 -0.01475 0.0355" rpy="0.0 0.0 3.141592654"/>
+    </joint> -->
+
+    <link name="left_finger_link">
+        <xacro:default_inertial mass="1.0"/>
+        <visual>
+            <origin xyz="0.02 0.0665 0.0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://hexaarm_description/meshes/left_gripper.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0.02 0.0665 0.0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://hexaarm_description/meshes/left_gripper.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="right_finger" type="continuous">
+        <parent link="gripper_link"/>
+        <child link="right_finger_link"/>
+        <axis xyz="0 0 1.0"/>
+        <limit lower="0.0" upper="${pi/2}" velocity="${velocity}" effort="${effort}"/>
+        <origin xyz="-0.012 -0.015 0.0357" rpy="0.0 0.0 3.03"/>
+    </joint>
+
+
+    <!-- <joint name="right_finger" type="fixed">
+        <parent link="gripper_link"/>
+        <child link="right_finger_link"/>
+        <origin xyz="-0.012 -0.015 0.0357" rpy="0.0 0.0 3.0"/>
+    </joint> -->
+
+
+    <link name="right_finger_link">
+        <xacro:default_inertial mass="1.0"/>
+        <visual>
+            <origin xyz="0.1037 0.034 -0.0013" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://hexaarm_description/meshes/right_gripper.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0.1037 0.034 -0.0013" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://hexaarm_description/meshes/right_gripper.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </collision>
+    </link>
+
 </robot>

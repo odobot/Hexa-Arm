@@ -1,0 +1,10 @@
+# Default initial positions for hexaarm's ros2_control fake system
+
+initial_positions:
+  base_shoulder: 0.0
+  elbow_wrist: 0.0
+  febur_gripper: 0.0
+  right_finger: 0.0
+  shoulder_elbow: 0.0
+  ulna_febur: 0.0
+  wrist_ulna: 0.0
