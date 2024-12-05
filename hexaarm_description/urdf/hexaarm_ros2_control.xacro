@@ -23,8 +23,8 @@
 
         <xacro:unless value="$(arg is_sim)">
             <hardware>
-                <plugin>hexaarm_controller/HexaarmInterface</plugin>
-                <param name="port">/dev/ttyUSB0</param>
+                <plugin>hexaarm_hardware/HEXAArm</plugin>
+                <param name="serial_port_name_">/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_A50285BI-if00-port0</param>
             </hardware>
         </xacro:unless>
 

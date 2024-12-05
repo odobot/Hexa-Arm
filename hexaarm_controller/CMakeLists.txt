@@ -7,41 +7,38 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
 find_package(hardware_interface REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
-find_package(rclcpp REQUIRED)
 find_package(PkgConfig REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
 
 pkg_check_modules(SERIAL libserial)
 
-add_library(${PROJECT_NAME} SHARED
-  src/hexaarm_interface.cpp
+add_library(
+  ${PROJECT_NAME} SHARED
+  src/hexaarm_hardware.cpp
 )
 
-target_include_directories(${PROJECT_NAME} PRIVATE 
-  include  
+target_include_directories(
+  ${PROJECT_NAME} PRIVATE
+  include
   "${SERIAL_INCLUDE_DIRS}"
 )
-target_link_libraries(${PROJECT_NAME}
+
+target_link_libraries(
+  ${PROJECT_NAME}
   "${SERIAL_LDFLAGS}"
 )
-ament_target_dependencies(${PROJECT_NAME} 
-  rclcpp
+
+ament_target_dependencies(${PROJECT_NAME}
   rclcpp_lifecycle
-  hardware_interface
+  rclcpp
   pluginlib
+  hardware_interface
 )
 
-pluginlib_export_plugin_description_file(hardware_interface hexaarm_controller.xml)
-
-install(
-  DIRECTORY config launch
-  DESTINATION share/${PROJECT_NAME}
-)
+pluginlib_export_plugin_description_file(hardware_interface hexaarm_hardware_plugin.xml)
 
 install(
   TARGETS ${PROJECT_NAME}
@@ -63,9 +60,16 @@ ament_export_libraries(
 
 ament_export_dependencies(
   hardware_interface
-  pluginlib
   rclcpp
   rclcpp_lifecycle
+  pluginlib
+)
+
+install(
+  DIRECTORY 
+    launch config
+  DESTINATION 
+    share/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)

@@ -1,9 +1,0 @@
-<library path="hexaarm_controller">
-    <class name="hexaarm_controller/HexaarmInterface"
-      type="hexaarm_controller::HexaarmInterface"
-      base_class_type="hardware_interface::SystemInterface">
-      <description>
-        Hexaarm Hardware Interface
-      </description>
-    </class>
-</library>

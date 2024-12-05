@@ -1,0 +1,12 @@
+<library path="hexaarm_controller">
+    <class name= "hexaarm_hardware/HEXAArm"
+           type = "hexaarm_hardware::HEXAArm"
+           base_class = "hardware_interface/SystemInterface"
+           base_class_type = "hardware_interface::SystemInterface">
+    </class>
+
+    <description>
+        This is a ROS2 plugin node that interfaces with the Robotic Arm.
+    </description>
+
+</library>
