@@ -161,12 +161,8 @@ namespace hexaarm_hardware
 
         try
         {
-            if (i == 0)
-            {
                 serial_port_.Write(serial_data_packet);
                 RCLCPP_INFO_STREAM(rclcpp::get_logger("hexaarm_hardware"), "Sent command to serial port: " << serial_data_packet);
-                i = 1;
-            }
         }
         catch (...)
         {
